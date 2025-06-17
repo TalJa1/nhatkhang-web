@@ -1,4 +1,3 @@
-// src/components/ManualCalendarGrid.tsx
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   Box,
@@ -31,14 +30,14 @@ import {
   isSameMonth,
   isSameDay,
   isToday,
-  getDate, // Gets day number
+  getDate,
 } from "date-fns";
 import { vi } from "date-fns/locale";
 import {
   mockCalendarEvents,
   type CalendarEvent,
   type EventCategory,
-} from "../../services/calendar/calendarData"; // Adjust path
+} from "../../services/calendar/calendarData";
 import EventDetailCard from "./EventDetailCard";
 import MiniCalendarModal from "./MiniCalendarModal";
 import AddEventForm from "./AddEventForm";
