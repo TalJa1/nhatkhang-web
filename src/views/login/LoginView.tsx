@@ -18,7 +18,7 @@ import { signInWithGoogle } from "../../firebase";
 
 const LoginView = () => {
   document.title = "Smart Login";
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [loginForm, setLoginForm] = useState<LoginInterface>({
     email: "NhatKhang@gmail.com",
     password: "123",
@@ -29,10 +29,8 @@ const LoginView = () => {
     password: "",
   });
 
-  // Add form validity state
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // Validation functions
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -49,7 +47,6 @@ const LoginView = () => {
     return "";
   };
 
-  // Handle email change with validation
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
     setLoginForm({ ...loginForm, email });
@@ -59,7 +56,6 @@ const LoginView = () => {
     });
   };
 
-  // Handle password change with validation
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const password = e.target.value;
     setLoginForm({ ...loginForm, password });
@@ -69,7 +65,6 @@ const LoginView = () => {
     });
   };
 
-  // Check form validity whenever inputs or errors change
   useEffect(() => {
     const emailError = validateEmail(loginForm.email);
     const passwordError = validatePassword(loginForm.password);
@@ -85,7 +80,6 @@ const LoginView = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Check validation before submission
     if (isFormValid) {
       console.log("Login attempt", loginForm);
     }
@@ -95,7 +89,6 @@ const LoginView = () => {
     const user = await signInWithGoogle();
     if (user) {
       console.log("User signed in with Google: ", user.displayName);
-      // Store user information in a single local storage item
       const userData = {
         uid: user.uid,
         displayName: user.displayName,
@@ -107,16 +100,18 @@ const LoginView = () => {
     } else {
       console.log("Google sign-in failed");
     }
-  };
-  return (
+  };  return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: "100vw",
+        width: "100%",
         height: "100vh",
-        minHeight: "100vh",
+        margin: 0,
+        padding: 0,
+        boxSizing: "border-box",
+        overflow: "hidden",
       }}
     >
       <Grid
