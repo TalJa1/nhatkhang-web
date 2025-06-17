@@ -108,7 +108,6 @@ const LoginView = () => {
       console.log("Google sign-in failed");
     }
   };
-
   return (
     <Box
       sx={{
@@ -116,6 +115,8 @@ const LoginView = () => {
         alignItems: "center",
         justifyContent: "center",
         width: "100vw",
+        height: "100vh",
+        minHeight: "100vh",
       }}
     >
       <Grid
