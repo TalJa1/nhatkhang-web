@@ -32,17 +32,89 @@ export const parseDate = (dateStr: string, timeStr?: string): Date => {
 };
 
 
-// Mock Data using Date objects
-// NOTE: Month in Date object is 0-indexed (0 = Jan, 3 = Apr)
+// Helper function to get dynamic dates around current month
+const getCurrentDate = () => new Date();
+const getCurrentMonth = () => getCurrentDate().getMonth();
+const getCurrentYear = () => getCurrentDate().getFullYear();
+
+// Mock Data using dynamic Date objects based on current date
+// Events are distributed across previous month, current month, and next month
 export const mockCalendarEvents: CalendarEvent[] = [
-  { id: 'e1', title: 'Toán', start: new Date(2025, 3, 7, 11, 30), end: new Date(2025, 3, 7, 13, 0), category: 'Lịch học' },
-  { id: 'e2', title: 'Design Review', start: new Date(2025, 3, 9), allDay: true, category: 'Khác' },
-  { id: 'e3', title: 'Văn 15 phút', start: new Date(2025, 3, 10, 10, 0), end: new Date(2025, 3, 10, 11, 0), category: 'Kiểm tra' },
-  { id: 'e4', title: 'Thể dục giữa kỳ', start: new Date(2025, 3, 10, 10, 0), end: new Date(2025, 3, 10, 11, 0), category: 'Kỳ thi' },
-  { id: 'e5', title: 'Sinh học', start: new Date(2025, 3, 14), description: 'Something', category: 'Lịch học', allDay: true },
-  { id: 'e6', title: 'Hóa 45 phút', start: new Date(2025, 3, 21), category: 'Kiểm tra', description: 'Lý - Thuyết trình', allDay: true },
-  { id: 'e7', title: 'Văn', start: new Date(2025, 3, 28), category: 'Lịch học', allDay: true },
-  { id: 'e8', title: 'Hóa 15 phút', start: new Date(2025, 3, 28), category: 'Kiểm tra', allDay: true },
-  { id: 'e9', title: 'Họp lớp', start: new Date(2025, 3, 28), category: 'Sự kiện', allDay: true },
-  { id: 'e10', title: 'Thi nghề', start: new Date(2025, 3, 28), category: 'Kỳ thi', allDay: true },
+  // Previous month events
+  { 
+    id: 'e1', 
+    title: 'Toán', 
+    start: new Date(getCurrentYear(), getCurrentMonth() - 1, 25, 11, 30), 
+    end: new Date(getCurrentYear(), getCurrentMonth() - 1, 25, 13, 0), 
+    category: 'Lịch học' 
+  },
+  { 
+    id: 'e2', 
+    title: 'Design Review', 
+    start: new Date(getCurrentYear(), getCurrentMonth() - 1, 28), 
+    allDay: true, 
+    category: 'Khác' 
+  },
+  
+  // Current month events
+  { 
+    id: 'e3', 
+    title: 'Văn 15 phút', 
+    start: new Date(getCurrentYear(), getCurrentMonth(), 5, 10, 0), 
+    end: new Date(getCurrentYear(), getCurrentMonth(), 5, 11, 0), 
+    category: 'Kiểm tra' 
+  },
+  { 
+    id: 'e4', 
+    title: 'Thể dục giữa kỳ', 
+    start: new Date(getCurrentYear(), getCurrentMonth(), 8, 10, 0), 
+    end: new Date(getCurrentYear(), getCurrentMonth(), 8, 11, 0), 
+    category: 'Kỳ thi' 
+  },
+  { 
+    id: 'e5', 
+    title: 'Sinh học', 
+    start: new Date(getCurrentYear(), getCurrentMonth(), 12), 
+    description: 'Something', 
+    category: 'Lịch học', 
+    allDay: true 
+  },
+  { 
+    id: 'e6', 
+    title: 'Hóa 45 phút', 
+    start: new Date(getCurrentYear(), getCurrentMonth(), 18), 
+    category: 'Kiểm tra', 
+    description: 'Lý - Thuyết trình', 
+    allDay: true 
+  },
+  { 
+    id: 'e7', 
+    title: 'Văn', 
+    start: new Date(getCurrentYear(), getCurrentMonth(), 22), 
+    category: 'Lịch học', 
+    allDay: true 
+  },
+  { 
+    id: 'e8', 
+    title: 'Hóa 15 phút', 
+    start: new Date(getCurrentYear(), getCurrentMonth(), 25), 
+    category: 'Kiểm tra', 
+    allDay: true 
+  },
+  
+  // Next month events
+  { 
+    id: 'e9', 
+    title: 'Họp lớp', 
+    start: new Date(getCurrentYear(), getCurrentMonth() + 1, 3), 
+    category: 'Sự kiện', 
+    allDay: true 
+  },
+  { 
+    id: 'e10', 
+    title: 'Thi nghề', 
+    start: new Date(getCurrentYear(), getCurrentMonth() + 1, 8), 
+    category: 'Kỳ thi', 
+    allDay: true 
+  },
 ];

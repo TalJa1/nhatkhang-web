@@ -64,7 +64,7 @@ const getEventColor = (
 // --- Calendar Component ---
 const ManualCalendarGrid = () => {
   const theme = useTheme();
-  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 3, 1));
+  const [currentMonth, setCurrentMonth] = useState(new Date()); // Initialize with current date
   const [currentView, setCurrentView] = useState("month");
   const [events, setEvents] = useState<CalendarEvent[]>(mockCalendarEvents);
   const [monthAnchorEl, setMonthAnchorEl] = useState<null | HTMLElement>(null);
@@ -109,12 +109,20 @@ const ManualCalendarGrid = () => {
   };
   const handleMonthMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
     setMonthAnchorEl(event.currentTarget);
-  const handleMonthMenuClose = () => setMonthAnchorEl(null);
-  const handleNavigate = (action: "prev" | "next" | "today") => {
-    /* ...no change... */
-    if (action === "prev") setCurrentMonth(subMonths(currentMonth, 1));
-    if (action === "next") setCurrentMonth(addMonths(currentMonth, 1));
-    if (action === "today") setCurrentMonth(new Date());
+  const handleMonthMenuClose = () => setMonthAnchorEl(null);  const handleNavigate = (action: "prev" | "next" | "today") => {
+    const today = new Date(); // Always get the current date
+    
+    if (action === "prev") {
+      // Previous month from current date (today)
+      setCurrentMonth(subMonths(today, 1));
+    } else if (action === "next") {
+      // Next month from current date (today)
+      setCurrentMonth(addMonths(today, 1));
+    } else if (action === "today") {
+      // Current month (today)
+      setCurrentMonth(today);
+    }
+    
     handleMonthMenuClose();
   };
   const handleEventClick = (event: CalendarEvent) => {
@@ -150,7 +158,6 @@ const ManualCalendarGrid = () => {
 
   // --- Handler to SAVE event from AddForm ---
   const handleSaveNewEvent = (newEvent: CalendarEvent) => {
-    console.log("Saving new event:", newEvent);
     setEvents((prevEvents) => [...prevEvents, newEvent]);
     // Option 1: Close modal completely after saving
     // handleCloseModal();
