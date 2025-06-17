@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   });
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", width: "100vw" }}>
+    <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
       <S
         style={{
           height: "100%",
