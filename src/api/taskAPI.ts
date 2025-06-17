@@ -1,4 +1,4 @@
-import { TaskAdd } from "../models/tabs/taskModel";
+import type { TaskAdd } from "../models/tabs/taskModel";
 import apiClient from "../services/apiClient";
 
 const TaskAPI = {
