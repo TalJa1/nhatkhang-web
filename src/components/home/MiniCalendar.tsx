@@ -11,8 +11,8 @@ import {
   isSameDay,
   isSameMonth,
   getDate, // Gets the day of the month (1-31)
-} from 'date-fns';
-import { vi } from 'date-fns/locale'; // Import Vietnamese locale
+} from "date-fns";
+import { vi } from "date-fns/locale"; // Import Vietnamese locale
 
 const MiniCalendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -74,13 +74,14 @@ const MiniCalendar = () => {
         <IconButton
           onClick={handlePrevMonth}
           size="small"
+          disabled
           aria-label="previous month"
         >
           <ChevronLeftIcon sx={{ color: "#1C1E30" }} />
         </IconButton>
         <Typography
           variant="subtitle1"
-          sx={{ fontWeight: "bold", color: "#1C1E30" }}
+          sx={{ fontWeight: "bold", color: "#256A6A" }}
         >
           {/* Format Month Year using Vietnamese locale */}
           {format(currentMonth, "MMMM yyyy", { locale: vi })}
@@ -89,6 +90,7 @@ const MiniCalendar = () => {
           onClick={handleNextMonth}
           size="small"
           aria-label="next month"
+          disabled
         >
           <ChevronRightIcon sx={{ color: "#1C1E30" }} />
         </IconButton>
@@ -138,7 +140,7 @@ const MiniCalendar = () => {
                 fontSize: "0.8rem",
                 fontWeight: isSelected ? "bold" : "normal",
                 color: isSelected ? "#FFFFFF" : "#1C1E30", // White text if selected, dark otherwise
-                bgcolor: isSelected ? "#1C1E30" : "transparent", // Dark background if selected
+                bgcolor: isSelected ? "#256A6A" : "transparent", // Dark background if selected
                 // opacity: isCurrentMonth ? 1 : 0.6, // Example: Dim days from other months
                 transition:
                   "background-color 0.2s ease-in-out, color 0.2s ease-in-out", // Smooth transition

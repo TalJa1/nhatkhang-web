@@ -192,7 +192,7 @@ const LoginView = () => {
                   mb: 2,
                   py: 1.5,
                   color: "white",
-                  backgroundColor: "#092C4C",
+                  backgroundColor: "#256A6A",
                 }}
               >
                 Đăng nhập
