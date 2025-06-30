@@ -254,7 +254,7 @@ const HomeWorks = () => {
                         ? "error"
                         : "warning"
                     }
-                    sx={{ mr: 1, pointerEvents: 'none', userSelect: 'none' }}
+                    sx={{ mr: 1, pointerEvents: "none", userSelect: "none" }}
                   />
                   <Typography color="error" fontWeight="bold">
                     {(() => {
@@ -362,7 +362,13 @@ const HomeWorks = () => {
                     <Typography sx={{ fontWeight: "bold", mr: 2 }}>
                       Nhắc nhở
                     </Typography>
-                    <Switch checked={reminder} disabled />
+                    <Switch
+                      checked={reminder}
+                      disabled
+                      onClick={() => {
+                        setReminder(!reminder);
+                      }}
+                    />
                     <Typography sx={{ ml: 2, mr: 1 }}>
                       Thông báo trước hạn nộp
                     </Typography>
@@ -371,6 +377,7 @@ const HomeWorks = () => {
                       size="small"
                       sx={{ minWidth: 80 }}
                       disabled
+                      onChange={(e) => setNotifyBefore(Number(e.target.value))}
                     >
                       <MenuItem value={1}>1 ngày</MenuItem>
                       <MenuItem value={2}>2 ngày</MenuItem>
