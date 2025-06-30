@@ -22,7 +22,11 @@ const SUBJECTS = [
   "Công Nghệ",
   "Giáo Dục Công Dân",
 ];
-const PRIORITIES = ["Thấp", "Trung bình", "Cao"];
+const PRIORITIES = [
+  { label: "Thấp", value: 1 },
+  { label: "Trung bình", value: 2 },
+  { label: "Cao", value: 3 },
+];
 const STATUSES = ["Hoàn thành", "Đang làm", "Quá hạn"];
 
 interface FilterDialogProps {
@@ -33,14 +37,22 @@ interface FilterDialogProps {
 }
 
 const FilterDialog: React.FC<FilterDialogProps> = ({ open, onClose, onApply, initialFilters }) => {
+
   const [selected, setSelected] = useState({
     subject: initialFilters?.subject || "",
     priority: initialFilters?.priority || "",
     status: initialFilters?.status || "",
   });
 
-  const handleChipClick = (field: "subject" | "priority" | "status", value: string) => {
-    setSelected((prev) => ({ ...prev, [field]: prev[field] === value ? "" : value }));
+
+  const handleChipClick = (
+    field: "subject" | "priority" | "status",
+    value: string | number
+  ) => {
+    setSelected((prev) => ({
+      ...prev,
+      [field]: prev[field] === value ? "" : value,
+    }));
   };
 
   const handleApply = () => {
@@ -71,11 +83,11 @@ const FilterDialog: React.FC<FilterDialogProps> = ({ open, onClose, onApply, ini
           <Box display="flex" flexWrap="wrap" gap={1}>
             {PRIORITIES.map((priority) => (
               <Chip
-                key={priority}
-                label={priority}
+                key={priority.value}
+                label={priority.label}
                 clickable
-                color={selected.priority === priority ? "primary" : "default"}
-                onClick={() => handleChipClick("priority", priority)}
+                color={Number(selected.priority) === priority.value ? "primary" : "default"}
+                onClick={() => handleChipClick("priority", priority.value)}
               />
             ))}
           </Box>

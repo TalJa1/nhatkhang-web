@@ -59,8 +59,9 @@ const HomeWorks = () => {
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSubject = !filters.subject || task.subject === filters.subject;
+    // Priority filter: compare as number, since DB and filter use int (1,2,3)
     const matchesPriority =
-      !filters.priority || task.priority.toString() === filters.priority;
+      !filters.priority || task.priority === Number(filters.priority);
     const matchesStatus = !filters.status || task.status === filters.status;
 
     return matchesSubject && matchesPriority && matchesStatus;
