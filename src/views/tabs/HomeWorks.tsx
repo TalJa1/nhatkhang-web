@@ -45,6 +45,7 @@ const HomeWorks = () => {
       const response: Task = await TaskAPI.getTasks({
         skip,
         limit,
+        filters,
       });
       if (
         response.data &&

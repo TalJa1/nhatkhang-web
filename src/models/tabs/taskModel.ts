@@ -1,6 +1,7 @@
 export interface Task {
   data: TaskData[]
   pagination: Pagination
+  filters: Filters
 }
 
 export interface TaskData {
@@ -23,6 +24,12 @@ export interface Pagination {
   per_page: number
   has_next: boolean
   has_previous: boolean
+}
+
+export interface Filters {
+  subject: string
+  priority: string
+  status: string
 }
 
 export interface TaskAdd {

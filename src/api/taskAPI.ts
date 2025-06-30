@@ -1,12 +1,17 @@
-import type { TaskAdd } from "../models/tabs/taskModel";
+import type { TaskAdd, Filters } from "../models/tabs/taskModel";
 import apiClient from "../services/apiClient";
 
 const TaskAPI = {
-  getTasks: async ({ skip = 0, limit = 10 } = {}) => {
+  getTasks: async ({ skip = 0, limit = 10, filters }: { skip?: number; limit?: number; filters?: Filters } = {}) => {
     try {
       const params = [];
       params.push(`skip=${skip}`);
       params.push(`limit=${limit}`);
+      if (filters) {
+        if (filters.subject) params.push(`subject=${encodeURIComponent(filters.subject)}`);
+        if (filters.priority) params.push(`priority=${encodeURIComponent(filters.priority)}`);
+        if (filters.status) params.push(`status=${encodeURIComponent(filters.status)}`);
+      }
       const query = params.join("&");
       const response = await apiClient.get(`/tasks?${query}`);
       return response.data;
