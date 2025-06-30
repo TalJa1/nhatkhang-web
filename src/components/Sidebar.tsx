@@ -36,26 +36,32 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   };
 
   const getMenuItemStyle = (isActive: boolean) => ({
-    backgroundColor: isActive
-      ? "#1C1E30" // Example using theme color
-      : "transparent",
-    margin: "8px 10px", // Adjust margin slightly
+    backgroundColor: isActive ? "#256A6A" : "transparent",
+    margin: "8px 10px",
     borderRadius: "8px",
-    color: isActive
-      ? theme.palette.primary.contrastText
-      : theme.palette.text.primary, // Adjust text colors
-    "&:hover": {
-      backgroundColor: !isActive
-        ? theme.palette.action.hover
-        : theme.palette.action.selected,
-      // color: isActive ? theme.palette.primary.contrastText : theme.palette.primary.main, // Optional hover text color change
-    },
-  });  return (
-    <Box 
-      sx={{ 
-        display: "flex", 
-        width: "100%", 
-        height: "100%"
+    color: isActive ? "#ffffff" : theme.palette.text.primary,
+    border: isActive ? "2px solid #256A6A" : "2px solid transparent",
+    transition: "border-color 0.2s, background-color 0.2s, color 0.2s",
+    ...(isActive
+      ? {
+          "&:hover": {
+            backgroundColor: "#256A6A",
+          },
+        }
+      : {
+          "&:hover": {
+            border: "2px solid #256A6A",
+            backgroundColor: "transparent",
+            color: theme.palette.text.primary,
+          },
+        }),
+  });
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
       }}
     >
       <S
