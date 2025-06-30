@@ -8,6 +8,19 @@ import {
   TableRow,
   Paper,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  Avatar,
+  Switch,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import Sidebar from "../../components/Sidebar";
 import { useEffect, useState } from "react";
@@ -29,11 +42,17 @@ const HomeWorks = () => {
   });
 
   const [loggedInUserName, setLoggedInUserName] = useState("Nguyên");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskData | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   useEffect(() => {
     const storedData = localStorage.getItem("userData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       setLoggedInUserName(parsedData.displayName ?? "Nguyên");
+      if (parsedData.photoURL) {
+        setAvatarUrl(parsedData.photoURL);
+      }
     }
   }, []);
 
@@ -80,6 +99,9 @@ const HomeWorks = () => {
   const filteredTasks = tasks;
 
   const HomeWorksContent = () => {
+    // Dialog state for reminder switch and notification days
+    const [reminder, setReminder] = useState(true);
+    const [notifyBefore, setNotifyBefore] = useState(2);
     const getStatusChip = (status: string) => {
       switch (status) {
         case "Hoàn thành":
@@ -122,11 +144,7 @@ const HomeWorks = () => {
           <TableContainer component={Paper}>
             <Table sx={{ tableLayout: "fixed", minWidth: 650 }}>
               <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: "#F9F9F9",
-                  }}
-                >
+                <TableRow sx={{ backgroundColor: "#F9F9F9" }}>
                   <TableCell sx={{ fontWeight: "bold" }}>Tiêu đề</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>Môn</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>Hạn</TableCell>
@@ -139,6 +157,11 @@ const HomeWorks = () => {
                   <TableRow
                     key={`${task.task_id}${task.title}${task.due_date}`}
                     hover
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setSelectedTask(task);
+                      setDialogOpen(true);
+                    }}
                   >
                     <TableCell>{task.title}</TableCell>
                     <TableCell>{task.subject}</TableCell>
@@ -164,7 +187,7 @@ const HomeWorks = () => {
                   borderColor: "#256A6A",
                 },
                 "& .Mui-selected": {
-                  backgroundColor: "#256A6A",
+                  backgroundColor: "black",
                   color: "#fff",
                 },
                 "& .MuiPaginationItem-root.Mui-selected:hover": {
@@ -177,6 +200,215 @@ const HomeWorks = () => {
             />
           </Box>
         </Box>
+
+        {/* Task Detail Dialog */}
+        <Dialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          {selectedTask && (
+            <>
+              <DialogTitle
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  pb: 0,
+                }}
+              >
+                <Avatar
+                  src={avatarUrl || undefined}
+                  sx={{ width: 64, height: 64, mb: 1 }}
+                >
+                  {loggedInUserName[0]}
+                </Avatar>
+                <Box sx={{ width: "100%" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: "bold", textAlign: "center" }}
+                  >
+                    {selectedTask.title}
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#666", textAlign: "center", mt: 1 }}
+                >
+                  Sắp đến hạn nộp bài tập rồi, hãy tập trung hoàn thành nào!
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+                  <Chip
+                    label={
+                      selectedTask.status === "Đang làm"
+                        ? "Đang làm"
+                        : selectedTask.status
+                    }
+                    color={
+                      selectedTask.status === "Đang làm"
+                        ? "info"
+                        : selectedTask.status === "Hoàn thành"
+                        ? "success"
+                        : selectedTask.status === "Quá hạn"
+                        ? "error"
+                        : "warning"
+                    }
+                    sx={{ mr: 1, pointerEvents: 'none', userSelect: 'none' }}
+                  />
+                  <Typography color="error" fontWeight="bold">
+                    {(() => {
+                      // Calculate days left
+                      const due = new Date(selectedTask.due_date);
+                      const now = new Date();
+                      const diff = Math.ceil(
+                        (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+                      );
+                      return diff > 0
+                        ? `Còn ${diff} ngày!`
+                        : diff === 0
+                        ? "Hôm nay!"
+                        : `Đã quá hạn!`;
+                    })()}
+                  </Typography>
+                </Box>
+              </DialogTitle>
+              <DialogContent>
+                <Box
+                  sx={{
+                    mt: 2,
+                    mb: 2,
+                    p: 2,
+                    border: "1px solid #eee",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                    Ngày{" "}
+                    {format(new Date(selectedTask.due_date), "d MMMM yyyy")}
+                  </Typography>
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", mt: 1, mb: 1 }}
+                  >
+                    <Typography sx={{ fontWeight: "bold", mr: 2 }}>
+                      Mức độ ưu tiên:
+                    </Typography>
+                    <Button
+                      variant={
+                        selectedTask.priority === 3 ? "contained" : "outlined"
+                      }
+                      sx={{
+                        mr: 1,
+                        minWidth: 80,
+                        backgroundColor:
+                          selectedTask.priority === 3 ? "#256A6A" : undefined,
+                        color: selectedTask.priority === 3 ? "#fff" : undefined,
+                        fontSize: 10,
+                      }}
+                      disabled
+                    >
+                      <span style={{ fontSize: 10 }}>Cao</span>
+                    </Button>
+                    <Button
+                      variant={
+                        selectedTask.priority === 2 ? "contained" : "outlined"
+                      }
+                      sx={{
+                        mr: 1,
+                        minWidth: 80,
+                        backgroundColor:
+                          selectedTask.priority === 2 ? "#256A6A" : undefined,
+                        color: selectedTask.priority === 2 ? "#fff" : undefined,
+                        fontSize: 10,
+                      }}
+                      disabled
+                    >
+                      <span style={{ fontSize: 10 }}>Trung bình</span>
+                    </Button>
+                    <Button
+                      variant={
+                        selectedTask.priority === 1 ? "contained" : "outlined"
+                      }
+                      sx={{
+                        minWidth: 80,
+                        backgroundColor:
+                          selectedTask.priority === 1 ? "#256A6A" : undefined,
+                        color: selectedTask.priority === 1 ? "#fff" : undefined,
+                        fontSize: 10,
+                      }}
+                      disabled
+                    >
+                      <span style={{ fontSize: 10 }}>Thấp</span>
+                    </Button>
+                    <FormControl
+                      sx={{ ml: 3, minWidth: 120 }}
+                      size="small"
+                      disabled
+                    >
+                      <InputLabel id="subject-label">Chọn môn</InputLabel>
+                      <Select
+                        labelId="subject-label"
+                        value={selectedTask.subject}
+                        label="Chọn môn"
+                        disabled
+                      >
+                        <MenuItem value={selectedTask.subject}>
+                          {selectedTask.subject}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                    <Typography sx={{ fontWeight: "bold", mr: 2 }}>
+                      Nhắc nhở
+                    </Typography>
+                    <Switch checked={reminder} disabled />
+                    <Typography sx={{ ml: 2, mr: 1 }}>
+                      Thông báo trước hạn nộp
+                    </Typography>
+                    <Select
+                      value={notifyBefore}
+                      size="small"
+                      sx={{ minWidth: 80 }}
+                      disabled
+                    >
+                      <MenuItem value={1}>1 ngày</MenuItem>
+                      <MenuItem value={2}>2 ngày</MenuItem>
+                      <MenuItem value={3}>3 ngày</MenuItem>
+                    </Select>
+                  </Box>
+                  <TextField
+                    label="Ghi chú"
+                    multiline
+                    minRows={3}
+                    value={selectedTask.description || "Không có ghi chú"}
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    InputProps={{ readOnly: true, disabled: true }}
+                  />
+                </Box>
+              </DialogContent>
+              <DialogActions
+                sx={{ justifyContent: "space-between", px: 3, pb: 2 }}
+              >
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => setDialogOpen(false)}
+                >
+                  Xóa
+                </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => setDialogOpen(false)}
+                >
+                  Hoàn thành
+                </Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
       </Box>
     );
   };
