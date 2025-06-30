@@ -6,8 +6,6 @@ import {
   MenuItem,
   TextField,
   Chip,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,7 +13,15 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import TaskAPI from "../../api/taskAPI";
 import TaskAddDialog from "./TaskAddDialog";
 
-function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject: string; priority: string; status: string }) => void }) {
+function ControlBarMui({
+  onFilterChange,
+}: {
+  onFilterChange: (filters: {
+    subject: string;
+    priority: string;
+    status: string;
+  }) => void;
+}) {
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     subject: "",
@@ -23,12 +29,14 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
     status: "",
   });
   const [subjects, setSubjects] = useState<string[]>([]);
-  const [isAllChecked, setIsAllChecked] = useState(false);
+  // Removed isAllChecked state
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Month/year state
   const now = new Date();
-  const [selectedDate, setSelectedDate] = useState(new Date(now.getFullYear(), now.getMonth(), 1));
+  const [selectedDate, setSelectedDate] = useState(
+    new Date(now.getFullYear(), now.getMonth(), 1)
+  );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const realMonth = now.getMonth();
@@ -38,7 +46,9 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
     return `Tháng ${date.getMonth() + 1}/${date.getFullYear()}`;
   };
 
-  const handleMonthButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMonthButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -56,7 +66,9 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
     const fetchSubjects = async () => {
       try {
         const tasks: { subject: string }[] = await TaskAPI.getTasks();
-        const uniqueSubjects = Array.from(new Set(tasks.map((task) => task.subject)));
+        const uniqueSubjects = Array.from(
+          new Set(tasks.map((task) => task.subject))
+        );
         setSubjects(uniqueSubjects);
       } catch (error) {
         console.error("Error fetching subjects:", error);
@@ -67,27 +79,24 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
   }, []);
 
   const handleFilterClick = () => {
-    setShowFilters(!showFilters); // Toggle the visibility of the filter row
-    if (showFilters) {
-      // Reset filters when closing the filter row
-      setFilters({ subject: "", priority: "", status: "" });
-      onFilterChange({ subject: "", priority: "", status: "" });
-    }
+    setShowFilters((prev) => {
+      if (prev) {
+        // Reset filters when closing the filter row
+        setFilters({ subject: "", priority: "", status: "" });
+        onFilterChange({ subject: "", priority: "", status: "" });
+      }
+      return !prev;
+    });
   };
 
   const handleFilterChange = (key: string, value: string) => {
+    // Removed setIsAllChecked (no 'Tất cả' button)
     const updatedFilters = { ...filters, [key]: value };
     setFilters(updatedFilters);
     onFilterChange(updatedFilters);
   };
 
-  const handleAllCheckChange = (checked: boolean) => {
-    setIsAllChecked(checked);
-    if (checked) {
-      setFilters({ subject: "", priority: "", status: "" });
-      onFilterChange({ subject: "", priority: "", status: "" });
-    }
-  };
+  // Removed handleAllCheckChange
 
   const handleDialogOpen = () => {
     setIsDialogOpen(true);
@@ -123,6 +132,7 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
             textTransform: "none",
             color: "text.primary",
             fontWeight: "normal",
+            visibility: "hidden",
             fontSize: "1rem",
             p: 0,
             "&:hover": {
@@ -140,34 +150,65 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
         >
           {/* Previous month */}
           <MuiMenuItem
-            onClick={() => handleMonthSelect(
-              realMonth - 1 < 0 ? 11 : realMonth - 1,
-              realMonth - 1 < 0 ? realYear - 1 : realYear
-            )}
-            selected={selectedDate.getMonth() === (realMonth - 1 < 0 ? 11 : realMonth - 1) && selectedDate.getFullYear() === (realMonth - 1 < 0 ? realYear - 1 : realYear)}
+            onClick={() =>
+              handleMonthSelect(
+                realMonth - 1 < 0 ? 11 : realMonth - 1,
+                realMonth - 1 < 0 ? realYear - 1 : realYear
+              )
+            }
+            selected={
+              selectedDate.getMonth() ===
+                (realMonth - 1 < 0 ? 11 : realMonth - 1) &&
+              selectedDate.getFullYear() ===
+                (realMonth - 1 < 0 ? realYear - 1 : realYear)
+            }
           >
-            {getMonthYearLabel(new Date(realMonth - 1 < 0 ? realYear - 1 : realYear, realMonth - 1 < 0 ? 11 : realMonth - 1, 1))}
+            {getMonthYearLabel(
+              new Date(
+                realMonth - 1 < 0 ? realYear - 1 : realYear,
+                realMonth - 1 < 0 ? 11 : realMonth - 1,
+                1
+              )
+            )}
           </MuiMenuItem>
           {/* Current month */}
           <MuiMenuItem
             onClick={() => handleMonthSelect(realMonth, realYear)}
-            selected={selectedDate.getMonth() === realMonth && selectedDate.getFullYear() === realYear}
+            selected={
+              selectedDate.getMonth() === realMonth &&
+              selectedDate.getFullYear() === realYear
+            }
           >
             {getMonthYearLabel(new Date(realYear, realMonth, 1))}
           </MuiMenuItem>
           {/* Next month */}
           <MuiMenuItem
-            onClick={() => handleMonthSelect(
-              realMonth + 1 > 11 ? 0 : realMonth + 1,
-              realMonth + 1 > 11 ? realYear + 1 : realYear
-            )}
-            selected={selectedDate.getMonth() === (realMonth + 1 > 11 ? 0 : realMonth + 1) && selectedDate.getFullYear() === (realMonth + 1 > 11 ? realYear + 1 : realYear)}
+            onClick={() =>
+              handleMonthSelect(
+                realMonth + 1 > 11 ? 0 : realMonth + 1,
+                realMonth + 1 > 11 ? realYear + 1 : realYear
+              )
+            }
+            selected={
+              selectedDate.getMonth() ===
+                (realMonth + 1 > 11 ? 0 : realMonth + 1) &&
+              selectedDate.getFullYear() ===
+                (realMonth + 1 > 11 ? realYear + 1 : realYear)
+            }
           >
-            {getMonthYearLabel(new Date(realMonth + 1 > 11 ? realYear + 1 : realYear, realMonth + 1 > 11 ? 0 : realMonth + 1, 1))}
+            {getMonthYearLabel(
+              new Date(
+                realMonth + 1 > 11 ? realYear + 1 : realYear,
+                realMonth + 1 > 11 ? 0 : realMonth + 1,
+                1
+              )
+            )}
           </MuiMenuItem>
         </MuiMenu>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}
+        >
           <Button
             variant="contained"
             startIcon={<AddIcon />}
@@ -199,29 +240,19 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
             Lọc
           </Button>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isAllChecked}
-                  onChange={(e) => handleAllCheckChange(e.target.checked)}
-                />
-              }
-              label="Tất cả"
-              sx={{ minWidth: 150 }}
-            />
-          </Box>
+          {/* Removed 'Tất cả' button */}
         </Box>
       </Box>
 
       {showFilters && (
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center", mt: 2 }}>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center", mt: 2, flexWrap: 'wrap' }}>
           <TextField
             label="Chọn môn"
             select
             value={filters.subject}
             onChange={(e) => handleFilterChange("subject", e.target.value)}
             sx={{ minWidth: 150 }}
+            color={filters.subject ? "primary" : "info"}
           >
             <MenuItem value="">Tất cả</MenuItem>
             {subjects.map((subject) => (
@@ -237,6 +268,7 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
             value={filters.priority}
             onChange={(e) => handleFilterChange("priority", e.target.value)}
             sx={{ minWidth: 150 }}
+            color={filters.priority ? "primary" : "info"}
           >
             <MenuItem value="">Tất cả</MenuItem>
             <MenuItem value="1">Thấp</MenuItem>
@@ -250,11 +282,56 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
                 key={status}
                 label={status}
                 onClick={() => handleFilterChange("status", status)}
-                color={filters.status === status ? "primary" : "default"}
+                color={filters.status === status ? "success" : "default"}
                 variant={filters.status === status ? "filled" : "outlined"}
+                sx={filters.status === status ? { fontWeight: 'bold', border: '2px solid #256A6A' } : {}}
               />
             ))}
           </Box>
+
+          {/* Show selected filters as chips */}
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            {filters.subject && (
+              <Chip
+                label={`Môn: ${filters.subject}`}
+                onDelete={() => handleFilterChange("subject", "")}
+                color="primary"
+                variant="filled"
+              />
+            )}
+            {filters.priority && (
+              <Chip
+                label={`Ưu tiên: ${
+                  filters.priority === "1" ? "Thấp" : filters.priority === "2" ? "Trung bình" : "Cao"
+                }`}
+                onDelete={() => handleFilterChange("priority", "")}
+                color="primary"
+                variant="filled"
+              />
+            )}
+            {filters.status && (
+              <Chip
+                label={`Trạng thái: ${filters.status}`}
+                onDelete={() => handleFilterChange("status", "")}
+                color="primary"
+                variant="filled"
+              />
+            )}
+          </Box>
+
+          {/* Remove all filters button */}
+          {(filters.subject || filters.priority || filters.status) && (
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => {
+                setFilters({ subject: "", priority: "", status: "" });
+                onFilterChange({ subject: "", priority: "", status: "" });
+              }}
+            >
+              Xóa bộ lọc
+            </Button>
+          )}
         </Box>
       )}
 
