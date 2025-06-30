@@ -473,6 +473,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdde
                   },
                 }}
                 onClick={isAddingTask ? handleSaveTask : handleAddTask}
+                disabled={isAddingTask && newTaskData.title.trim() === ""}
               >
                 {isAddingTask ? "Lưu bài tập" : "Thêm bài tập"}
               </Button>
