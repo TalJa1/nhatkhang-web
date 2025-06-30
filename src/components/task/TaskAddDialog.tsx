@@ -170,6 +170,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({
                   textTransform: "none",
                   width: "80%",
                   fontWeight: "medium",
+                  mb: 2,
                 }}
               >
                 Đóng
@@ -390,7 +391,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({
 
                   return (
                     <Box
-                      key={`task-${task.user_id}${task.title}`}
+                      key={`task-${task.task_id}`}
                       sx={{
                         mb: 2,
                         p: 2,
@@ -475,6 +476,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({
                   textTransform: "none",
                   fontWeight: "medium",
                   width: "80%",
+                  mb: 2,
                   "&:hover": {
                     bgcolor: isAddingTask ? "#c0392b" : "#34495e",
                   },
