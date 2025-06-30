@@ -408,7 +408,25 @@ const HomeWorks = () => {
                 <Button
                   variant="contained"
                   color="success"
-                  onClick={() => setDialogOpen(false)}
+                  onClick={async () => {
+                    if (selectedTask) {
+                      try {
+                        await TaskAPI.updateTask(selectedTask.task_id, {
+                          user_id: selectedTask.user_id,
+                          title: selectedTask.title,
+                          subject: selectedTask.subject,
+                          due_date: selectedTask.due_date,
+                          priority: selectedTask.priority,
+                          status: "Hoàn thành",
+                          description: selectedTask.description || "",
+                        });
+                        fetchTasks();
+                      } catch (error) {
+                        console.error("Error updating task status:", error);
+                      }
+                    }
+                    setDialogOpen(false);
+                  }}
                 >
                   Hoàn thành
                 </Button>
