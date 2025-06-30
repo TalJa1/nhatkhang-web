@@ -11,14 +11,17 @@ import {
 } from "@mui/material";
 import Sidebar from "../../components/Sidebar";
 import { useEffect, useState } from "react";
+import Pagination from "@mui/material/Pagination";
 import TaskAPI from "../../api/taskAPI";
 import HeaderSearchBar from "../../components/HeaderSearchBar";
 import { format } from "date-fns";
-import type { Task } from "../../models/tabs/taskModel";
+import type { Task, TaskData } from "../../models/tabs/taskModel";
 import ControlBarMui from "../../components/task/ControlBarMui";
 
 const HomeWorks = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskData[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
     subject: "",
     priority: "",
@@ -34,12 +37,25 @@ const HomeWorks = () => {
     }
   }, []);
 
-
-  // Extracted fetchTasks so it can be reused
+  const pageSize = 10;
   const fetchTasks = async () => {
     try {
-      const data = await TaskAPI.getTasks();
-      setTasks(data);
+      const skip = (page - 1) * pageSize;
+      const limit = pageSize;
+      const response: Task = await TaskAPI.getTasks({
+        skip,
+        limit,
+      });
+      if (
+        response.data &&
+        typeof response.pagination.total_pages === "number"
+      ) {
+        setTasks(response.data);
+        setTotalPages(response.pagination.total_pages);
+      } else {
+        setTasks(Array.isArray(response) ? response : []);
+        setTotalPages(1);
+      }
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -47,24 +63,20 @@ const HomeWorks = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, filters]);
 
   const handleFilterChange = (newFilters: {
     subject: string;
     priority: string;
     status: string;
   }) => {
+    setPage(1);
     setFilters(newFilters);
   };
 
-  const filteredTasks = tasks.filter((task) => {
-    const matchesSubject = !filters.subject || task.subject === filters.subject;
-    const matchesPriority =
-      !filters.priority || task.priority === Number(filters.priority);
-    const matchesStatus = !filters.status || task.status === filters.status;
-
-    return matchesSubject && matchesPriority && matchesStatus;
-  });
+  // Data is already filtered and paged from the server
+  const filteredTasks = tasks;
 
   const HomeWorksContent = () => {
     const getStatusChip = (status: string) => {
@@ -103,7 +115,7 @@ const HomeWorks = () => {
         <HeaderSearchBar userName={loggedInUserName} />
         <ControlBarMui
           onFilterChange={handleFilterChange}
-          onTaskAdded={fetchTasks}
+          onTaskAdded={() => fetchTasks()}
         />
         <Box>
           <TableContainer component={Paper}>
@@ -137,6 +149,17 @@ const HomeWorks = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={(_, value) => setPage(value)}
+              color="primary"
+              shape="rounded"
+              showFirstButton
+              showLastButton
+            />
+          </Box>
         </Box>
       </Box>
     );

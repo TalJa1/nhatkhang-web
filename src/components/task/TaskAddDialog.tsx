@@ -17,7 +17,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import LeftCalendar from "./LeftCalendar";
 import { fetchTasksByDate } from "../../api/taskAPI"; // Assuming this is a named export
 import TaskAPI from "../../api/taskAPI"; // Assuming this is a named export
-import type { Task, TaskAdd } from "../../models/tabs/taskModel";
+import type { TaskData, TaskAdd } from "../../models/tabs/taskModel";
 
 interface TaskAddDialogProps {
   open: boolean;
@@ -25,11 +25,15 @@ interface TaskAddDialogProps {
   onTaskAdded?: () => void;
 }
 
-const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdded }) => {
+const TaskAddDialog: React.FC<TaskAddDialogProps> = ({
+  open,
+  onClose,
+  onTaskAdded,
+}) => {
   const [swt, setSwt] = useState(false);
-  const [clickedBox, setClickedBox] = useState(0)
+  const [clickedBox, setClickedBox] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskData[]>([]);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false); // New state to track if the mode is update or post
   const [notificationDays, setNotificationDays] = useState(1);
@@ -37,7 +41,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdde
     user_id: 4, // Replace with actual user_id
     title: "",
     subject: "Toán",
-    due_date: selectedDate.toISOString().split('T')[0], // Correctly format the date without time zone offset
+    due_date: selectedDate.toISOString().split("T")[0], // Correctly format the date without time zone offset
     priority: 1, // Default priority
     status: "Đang làm", // Default status
     description: "", // Default description
@@ -59,18 +63,21 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdde
     setIsUpdateMode(false); // Set to post mode when clicking the add button
   };
 
-  const handleTaskClick = (task: Task) => {
-    setClickedBox(task.task_id)
+  const handleTaskClick = (task: TaskData) => {
+    setClickedBox(task.task_id);
     setIsAddingTask(true);
     setIsUpdateMode(true); // Set to update mode when clicking on a task box
     setNewTaskData({
       user_id: task.user_id,
       title: task.title,
       subject: task.subject,
-      due_date: task.due_date,
+      due_date:
+        typeof task.due_date === "string" && task.due_date.length > 10
+          ? task.due_date.slice(0, 10)
+          : task.due_date,
       priority: task.priority,
       status: task.status,
-      description: task.description,
+      description: task.description ?? "",
     });
   };
 
@@ -105,7 +112,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdde
         setTasks(tasksData);
         setNewTaskData((prevData) => ({
           ...prevData,
-          due_date: selectedDate.toLocaleDateString('en-CA'), // Correctly format the date without timezone offset
+          due_date: selectedDate.toLocaleDateString("en-CA"), // Correctly format the date without timezone offset
         }));
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -371,14 +378,14 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdde
               ) : tasks.length > 0 ? (
                 tasks.map((task) => {
                   let borderColor = "#4caf50"; // Default: Hoàn thành
-                  let priority = "Trung bình"; // Default priority
+                  let priorityLabel = "Trung bình"; // Default priority
 
                   if (task.status === "Đang làm") {
                     borderColor = "#ff9800"; // Orange for "Đang làm"
-                    priority = "Cao";
+                    priorityLabel = "Cao";
                   } else if (task.status === "Quá hạn") {
                     borderColor = "#f44336"; // Red for "Quá hạn"
-                    priority = "Rất cao";
+                    priorityLabel = "Rất cao";
                   }
 
                   return (
@@ -444,7 +451,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdde
                         }}
                       >
                         <StarBorderIcon sx={{ fontSize: 16 }} /> Mức độ ưu tiên:{" "}
-                        {priority}
+                        {priorityLabel}
                       </Typography>
                     </Box>
                   );

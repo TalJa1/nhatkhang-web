@@ -1,14 +1,28 @@
 export interface Task {
-  title: string;
-  task_id: number;
-  due_date: string; // ISO 8601 format
-  status: string;
-  updated_at: string; // ISO 8601 format
-  user_id: number;
-  subject: string;
-  priority: number;
-  description: string;
-  created_at: string; // ISO 8601 format
+  data: TaskData[]
+  pagination: Pagination
+}
+
+export interface TaskData {
+  task_id: number
+  subject: string
+  due_date: string
+  status: string
+  updated_at: string
+  user_id: number
+  description?: string
+  title: string
+  priority: number
+  created_at: string
+}
+
+export interface Pagination {
+  total_count: number
+  total_pages: number
+  current_page: number
+  per_page: number
+  has_next: boolean
+  has_previous: boolean
 }
 
 export interface TaskAdd {

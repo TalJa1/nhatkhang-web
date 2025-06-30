@@ -2,9 +2,13 @@ import type { TaskAdd } from "../models/tabs/taskModel";
 import apiClient from "../services/apiClient";
 
 const TaskAPI = {
-  getTasks: async () => {
+  getTasks: async ({ skip = 0, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get("/tasks");
+      const params = [];
+      params.push(`skip=${skip}`);
+      params.push(`limit=${limit}`);
+      const query = params.join("&");
+      const response = await apiClient.get(`/tasks?${query}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching tasks:", error);
