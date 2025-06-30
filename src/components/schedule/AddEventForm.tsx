@@ -90,7 +90,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
 
   // --- Handlers ---
   const handleCategoryChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newCategory: EventCategory | null
   ) => {
     // Allow deselecting if needed, but toggle button group usually prevents null unless `exclusive` is off

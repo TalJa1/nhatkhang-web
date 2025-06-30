@@ -245,12 +245,12 @@ const ManualCalendarGrid = () => {
           startIcon={<AddIcon />}
           size="small"
           sx={{
-            backgroundColor: "#1C2A3A",
+            backgroundColor: "#256A6A",
             "&:hover": { backgroundColor: "#334257" },
             textTransform: "none",
             borderRadius: "8px",
           }}
-          onClick={() => console.log("Add Event Clicked")} // Replace with modal logic
+          onClick={() => {}} // Replace with modal logic
         >
           Thêm
         </Button>
@@ -367,7 +367,7 @@ const ManualCalendarGrid = () => {
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(7, 1fr)", // 7 columns
-            backgroundColor: "#1C2A3A", // Dark background
+            backgroundColor: "#256A6A", // Dark background
             color: "#ffffff", // White text
             textAlign: "center",
             borderRadius: "4px 4px 0 0", // Rounded top corners
