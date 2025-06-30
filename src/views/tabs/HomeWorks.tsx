@@ -168,7 +168,7 @@ const HomeWorks = () => {
                   color: "#fff",
                 },
                 "& .MuiPaginationItem-root.Mui-selected:hover": {
-                  backgroundColor: "#1e5555",
+                  backgroundColor: "#256A6A",
                 },
                 "& .MuiPaginationItem-root:hover": {
                   backgroundColor: "#e0f2f1",
