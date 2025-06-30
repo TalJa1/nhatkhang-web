@@ -401,7 +401,17 @@ const HomeWorks = () => {
                 <Button
                   variant="outlined"
                   color="error"
-                  onClick={() => setDialogOpen(false)}
+                  onClick={async () => {
+                    if (selectedTask) {
+                      try {
+                        await TaskAPI.deleteTask(selectedTask.task_id);
+                        fetchTasks();
+                      } catch (error) {
+                        console.error("Error deleting task:", error);
+                      }
+                    }
+                    setDialogOpen(false);
+                  }}
                 >
                   Xóa
                 </Button>
