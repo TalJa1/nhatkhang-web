@@ -12,10 +12,10 @@ import {
 import Sidebar from "../../components/Sidebar";
 import { useEffect, useState } from "react";
 import TaskAPI from "../../api/taskAPI";
-import ControlBarMui from "../../components/task/ControlBarMui";
 import HeaderSearchBar from "../../components/HeaderSearchBar";
 import { format } from "date-fns";
 import type { Task } from "../../models/tabs/taskModel";
+import ControlBarMui from "../../components/task/ControlBarMui";
 
 const HomeWorks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -34,16 +34,18 @@ const HomeWorks = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const data = await TaskAPI.getTasks();
-        setTasks(data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
 
+  // Extracted fetchTasks so it can be reused
+  const fetchTasks = async () => {
+    try {
+      const data = await TaskAPI.getTasks();
+      setTasks(data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchTasks();
   }, []);
 
@@ -99,7 +101,10 @@ const HomeWorks = () => {
     return (
       <Box sx={{ width: "100%", overflowX: "hidden" }}>
         <HeaderSearchBar userName={loggedInUserName} />
-        <ControlBarMui onFilterChange={handleFilterChange} />
+        <ControlBarMui
+          onFilterChange={handleFilterChange}
+          onTaskAdded={fetchTasks}
+        />
         <Box>
           <TableContainer component={Paper}>
             <Table sx={{ tableLayout: "fixed", minWidth: 650 }}>

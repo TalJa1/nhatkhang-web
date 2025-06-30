@@ -22,9 +22,10 @@ import type { Task, TaskAdd } from "../../models/tabs/taskModel";
 interface TaskAddDialogProps {
   open: boolean;
   onClose: () => void;
+  onTaskAdded?: () => void;
 }
 
-const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose }) => {
+const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose, onTaskAdded }) => {
   const [swt, setSwt] = useState(false);
   const [clickedBox, setClickedBox] = useState(0)
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -83,6 +84,8 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose }) => {
         await TaskAPI.createTask(newTaskData); // Assuming createTask is an API function
       }
       setIsAddingTask(false);
+      // Call the parent's reload callback if provided
+      if (onTaskAdded) onTaskAdded();
       // Optionally, refresh tasks or show a success message
     } catch (error) {
       console.error("Error saving task:", error);
@@ -281,7 +284,7 @@ const TaskAddDialog: React.FC<TaskAddDialogProps> = ({ open, onClose }) => {
                           <MenuItem value="Toán">Toán</MenuItem>
                           <MenuItem value="Văn">Văn</MenuItem>
                           <MenuItem value="Tiếng Anh">Tiếng Anh</MenuItem>
-                          <MenuItem value="Lịch Sử">Lịch Sử</MenuItem>
+                          <MenuItem value="Lịch sử">Lịch Sử</MenuItem>
                           <MenuItem value="Địa Lý">Địa Lý</MenuItem>
                           <MenuItem value="Vật Lý">Vật Lý</MenuItem>
                           <MenuItem value="Hóa Học">Hóa Học</MenuItem>
