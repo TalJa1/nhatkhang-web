@@ -26,13 +26,13 @@ const HomeWorks = () => {
   });
 
   const [loggedInUserName, setLoggedInUserName] = useState("Nguyên");
-    useEffect(() => {
-      const storedData = localStorage.getItem("userData");
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        setLoggedInUserName(parsedData.displayName ?? "Nguyên");
-      }
-    }, []);
+  useEffect(() => {
+    const storedData = localStorage.getItem("userData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      setLoggedInUserName(parsedData.displayName ?? "Nguyên");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -47,13 +47,16 @@ const HomeWorks = () => {
     fetchTasks();
   }, []);
 
-  const handleFilterChange = (newFilters: { subject: string; priority: string; status: string }) => {
+  const handleFilterChange = (newFilters: {
+    subject: string;
+    priority: string;
+    status: string;
+  }) => {
     setFilters(newFilters);
   };
 
   const filteredTasks = tasks.filter((task) => {
-    const matchesSubject =
-      !filters.subject || task.subject === filters.subject;
+    const matchesSubject = !filters.subject || task.subject === filters.subject;
     const matchesPriority =
       !filters.priority || task.priority.toString() === filters.priority;
     const matchesStatus = !filters.status || task.status === filters.status;
@@ -101,17 +104,24 @@ const HomeWorks = () => {
           <TableContainer component={Paper}>
             <Table sx={{ tableLayout: "fixed", minWidth: 650 }}>
               <TableHead>
-                <TableRow>
-                  <TableCell>Tiêu đề</TableCell>
-                  <TableCell>Môn</TableCell>
-                  <TableCell>Hạn</TableCell>
-                  <TableCell>Mức ưu tiên</TableCell>
-                  <TableCell>Trạng thái</TableCell>
+                <TableRow
+                  sx={{
+                    backgroundColor: "#F9F9F9",
+                  }}
+                >
+                  <TableCell sx={{ fontWeight: "bold" }}>Tiêu đề</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Môn</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Hạn</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Mức ưu tiên</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Trạng thái</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredTasks.map((task) => (
-                  <TableRow key={`${task.task_id}${task.title}${task.due_date}`} hover>
+                  <TableRow
+                    key={`${task.task_id}${task.title}${task.due_date}`}
+                    hover
+                  >
                     <TableCell>{task.title}</TableCell>
                     <TableCell>{task.subject}</TableCell>
                     <TableCell>{formatDate(task.due_date)}</TableCell>
