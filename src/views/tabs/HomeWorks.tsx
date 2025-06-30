@@ -154,10 +154,25 @@ const HomeWorks = () => {
               count={totalPages}
               page={page}
               onChange={(_, value) => setPage(value)}
-              color="primary"
               shape="rounded"
               showFirstButton
               showLastButton
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  color: "#256A6A",
+                  borderColor: "#256A6A",
+                },
+                "& .Mui-selected": {
+                  backgroundColor: "#256A6A",
+                  color: "#fff",
+                },
+                "& .MuiPaginationItem-root.Mui-selected:hover": {
+                  backgroundColor: "#1e5555",
+                },
+                "& .MuiPaginationItem-root:hover": {
+                  backgroundColor: "#e0f2f1",
+                },
+              }}
             />
           </Box>
         </Box>
