@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Menu as MuiMenu, MenuItem as MuiMenuItem } from "@mui/material";
 import {
   Box,
   Button,
@@ -15,15 +16,41 @@ import TaskAPI from "../../api/taskAPI";
 import TaskAddDialog from "./TaskAddDialog";
 
 function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject: string; priority: string; status: string }) => void }) {
-  const [showFilters, setShowFilters] = useState(false); // Default to false to hide the filter row initially
+  const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     subject: "",
     priority: "",
     status: "",
   });
   const [subjects, setSubjects] = useState<string[]>([]);
-  const [isAllChecked, setIsAllChecked] = useState(false); // New state to manage checkbox
+  const [isAllChecked, setIsAllChecked] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Month/year state
+  const now = new Date();
+  const [selectedDate, setSelectedDate] = useState(new Date(now.getFullYear(), now.getMonth(), 1));
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const realMonth = now.getMonth();
+  const realYear = now.getFullYear();
+
+  const getMonthYearLabel = (date: Date) => {
+    return `Tháng ${date.getMonth() + 1}/${date.getFullYear()}`;
+  };
+
+  const handleMonthButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMonthMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Only allow selection among realMonth-1, realMonth, realMonth+1
+  const handleMonthSelect = (month: number, year: number) => {
+    setSelectedDate(new Date(year, month, 1));
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -90,7 +117,7 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
         }}
       >
         <Button
-          onClick={() => console.log("Date selector clicked")}
+          onClick={handleMonthButtonClick}
           endIcon={<KeyboardArrowDownIcon />}
           sx={{
             textTransform: "none",
@@ -103,8 +130,42 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
             },
           }}
         >
-          Tháng 4/2025
+          {getMonthYearLabel(selectedDate)}
         </Button>
+        <MuiMenu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMonthMenuClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          {/* Previous month */}
+          <MuiMenuItem
+            onClick={() => handleMonthSelect(
+              realMonth - 1 < 0 ? 11 : realMonth - 1,
+              realMonth - 1 < 0 ? realYear - 1 : realYear
+            )}
+            selected={selectedDate.getMonth() === (realMonth - 1 < 0 ? 11 : realMonth - 1) && selectedDate.getFullYear() === (realMonth - 1 < 0 ? realYear - 1 : realYear)}
+          >
+            {getMonthYearLabel(new Date(realMonth - 1 < 0 ? realYear - 1 : realYear, realMonth - 1 < 0 ? 11 : realMonth - 1, 1))}
+          </MuiMenuItem>
+          {/* Current month */}
+          <MuiMenuItem
+            onClick={() => handleMonthSelect(realMonth, realYear)}
+            selected={selectedDate.getMonth() === realMonth && selectedDate.getFullYear() === realYear}
+          >
+            {getMonthYearLabel(new Date(realYear, realMonth, 1))}
+          </MuiMenuItem>
+          {/* Next month */}
+          <MuiMenuItem
+            onClick={() => handleMonthSelect(
+              realMonth + 1 > 11 ? 0 : realMonth + 1,
+              realMonth + 1 > 11 ? realYear + 1 : realYear
+            )}
+            selected={selectedDate.getMonth() === (realMonth + 1 > 11 ? 0 : realMonth + 1) && selectedDate.getFullYear() === (realMonth + 1 > 11 ? realYear + 1 : realYear)}
+          >
+            {getMonthYearLabel(new Date(realMonth + 1 > 11 ? realYear + 1 : realYear, realMonth + 1 > 11 ? 0 : realMonth + 1, 1))}
+          </MuiMenuItem>
+        </MuiMenu>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}>
           <Button
@@ -112,7 +173,7 @@ function ControlBarMui({ onFilterChange }: { onFilterChange: (filters: { subject
             startIcon={<AddIcon />}
             onClick={handleDialogOpen}
             sx={{
-              bgcolor: "#2c3e50",
+              bgcolor: "#256A6A",
               color: "#fff",
               "&:hover": {
                 bgcolor: "#34495e",
