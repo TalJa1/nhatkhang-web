@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       "Tổng quan",
       "Lịch học",
       "Bài tập",
+      "Hỏi đáp",
       "Mục tiêu",
       "Pomodoro",
       "Hiệu suất học tập",
@@ -164,6 +165,13 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               onClick={() => handleTabChange("Bài tập", "/homeworks")}
             >
               Bài tập
+            </MenuItem>
+            <MenuItem
+              icon={<AssessmentIcon />}
+              active={activeTab === "Hỏi đáp"}
+              onClick={() => handleTabChange("Hỏi đáp", "/qa")}
+            >
+              Hỏi đáp
             </MenuItem>
             {/* Add other MenuItems similarly */}
             <MenuItem
