@@ -181,22 +181,6 @@ const HomeWorks = () => {
               shape="rounded"
               showFirstButton
               showLastButton
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  color: "#256A6A",
-                  borderColor: "#256A6A",
-                },
-                "& .Mui-selected": {
-                  backgroundColor: "black",
-                  color: "#fff",
-                },
-                "& .MuiPaginationItem-root.Mui-selected:hover": {
-                  backgroundColor: "#256A6A",
-                },
-                "& .MuiPaginationItem-root:hover": {
-                  backgroundColor: "#e0f2f1",
-                },
-              }}
             />
           </Box>
         </Box>

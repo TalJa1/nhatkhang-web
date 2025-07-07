@@ -108,9 +108,10 @@ const ManualCalendarGrid = () => {
   };
   const handleMonthMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
     setMonthAnchorEl(event.currentTarget);
-  const handleMonthMenuClose = () => setMonthAnchorEl(null);  const handleNavigate = (action: "prev" | "next" | "today") => {
+  const handleMonthMenuClose = () => setMonthAnchorEl(null);
+  const handleNavigate = (action: "prev" | "next" | "today") => {
     const today = new Date(); // Always get the current date
-    
+
     if (action === "prev") {
       // Previous month from current date (today)
       setCurrentMonth(subMonths(today, 1));
@@ -121,7 +122,7 @@ const ManualCalendarGrid = () => {
       // Current month (today)
       setCurrentMonth(today);
     }
-    
+
     handleMonthMenuClose();
   };
   const handleEventClick = (event: CalendarEvent) => {
@@ -470,7 +471,6 @@ const ManualCalendarGrid = () => {
                         }}
                       >
                         <b>{event.title}</b>
-                        {/* Optional: Display time/description */}
                         {event.description && (
                           <Typography
                             variant="caption"
@@ -485,7 +485,6 @@ const ManualCalendarGrid = () => {
                           </Typography>
                         )}
                         {!event.allDay && format(event.start, "HH:mm")}
-                        {/* Handle end time if needed */}
                       </Box>
                     );
                   })}
