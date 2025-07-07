@@ -420,8 +420,7 @@ const ManualCalendarGrid = () => {
                   backgroundColor: isCurrentDay
                     ? alpha(theme.palette.primary.light, 0.1)
                     : "inherit",
-                  "&:nth-of-type(7n)": { borderRight: "none" }, // Remove right border on last column
-                  // Potentially remove bottom border on last row - harder with dynamic rows
+                  "&:nth-of-type(7n)": { borderRight: "none" },
                 }}
               >
                 {/* Day Number */}
