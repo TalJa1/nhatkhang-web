@@ -20,7 +20,21 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const theme = useTheme(); // Access MUI theme for styling if needed
   const [activeTab, setActiveTab] = useState(() => {
-    return localStorage.getItem("activeTab") || "Tổng quan";
+    const stored = localStorage.getItem("activeTab");
+    const validTabs = [
+      "Tổng quan",
+      "Lịch học",
+      "Bài tập",
+      "Mục tiêu",
+      "Pomodoro",
+      "Hiệu suất học tập",
+      "Thông báo",
+      "Cài đặt"
+    ];
+    if (stored && validTabs.includes(stored)) {
+      return stored;
+    }
+    return "Tổng quan";
   });
   const navigate = useNavigate();
 

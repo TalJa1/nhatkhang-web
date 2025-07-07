@@ -86,6 +86,8 @@ const LoginView = () => {
   };
 
   const handleGoogleLogin = async () => {
+    localStorage.removeItem("userData");
+    localStorage.removeItem("activeTab");
     const user = await signInWithGoogle();
     if (user) {
       console.log("User signed in with Google: ", user.displayName);
