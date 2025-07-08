@@ -66,6 +66,8 @@ const ManualCalendarGrid = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date()); // Initialize with current date
   const [currentView, setCurrentView] = useState("month");
   const [events, setEvents] = useState<CalendarEvent[]>(mockCalendarEvents);
+  // State for category filter
+  const [selectedCategory, setSelectedCategory] = useState<EventCategory | null>(null);
   const [monthAnchorEl, setMonthAnchorEl] = useState<null | HTMLElement>(null);
   const isMonthMenuOpen = Boolean(monthAnchorEl);
 
@@ -88,17 +90,19 @@ const ManualCalendarGrid = () => {
 
   const getEventsForDay = useCallback(
     (day: Date): CalendarEvent[] => {
-      /* ...no change... */
-      return events.filter((event) => isSameDay(event.start, day));
+      let filtered = events.filter((event) => isSameDay(event.start, day));
+      if (selectedCategory) {
+        filtered = filtered.filter((event) => event.category === selectedCategory);
+      }
+      return filtered;
     },
-    [events]
-  ); // Depend on events state
+    [events, selectedCategory]
+  );
 
   const eventsForSelectedDay = useMemo(() => {
-    // Filter events for the VIEW mode
     if (!selectedDateForModal) return [];
     return getEventsForDay(selectedDateForModal);
-  }, [getEventsForDay, selectedDateForModal]); // Depend on function and selected date
+  }, [getEventsForDay, selectedDateForModal]);
 
   // --- Handlers ---
   const handleViewChange = (_event: React.SyntheticEvent, newValue: string) => {
@@ -310,35 +314,57 @@ const ManualCalendarGrid = () => {
             gap: 1,
           }}
         >
-          {" "}
-          {/* Hide filters on small screens */}
           <Chip
             label="Lịch học"
             size="small"
-            variant="outlined"
+            variant={selectedCategory === "Lịch học" ? "filled" : "outlined"}
             clickable
-            sx={{ borderColor: "#A5D6A7", color: "#4CAF50" }}
+            sx={{
+              borderColor: "#A5D6A7",
+              color: selectedCategory === "Lịch học" ? "#fff" : undefined,
+              backgroundColor: selectedCategory === "Lịch học" ? "#4CAF50" : undefined,
+              fontWeight: selectedCategory === "Lịch học" ? 600 : undefined,
+            }}
+            onClick={() => setSelectedCategory(selectedCategory === "Lịch học" ? null : "Lịch học")}
           />
           <Chip
             label="Kiểm tra"
             size="small"
-            variant="outlined"
+            variant={selectedCategory === "Kiểm tra" ? "filled" : "outlined"}
             clickable
-            sx={{ borderColor: "#EF9A9A", color: "#D32F2F" }}
+            sx={{
+              borderColor: "#EF9A9A",
+              color: selectedCategory === "Kiểm tra" ? "#fff" : undefined,
+              backgroundColor: selectedCategory === "Kiểm tra" ? "#D32F2F" : undefined,
+              fontWeight: selectedCategory === "Kiểm tra" ? 600 : undefined,
+            }}
+            onClick={() => setSelectedCategory(selectedCategory === "Kiểm tra" ? null : "Kiểm tra")}
           />
           <Chip
             label="Kỳ thi"
             size="small"
-            variant="outlined"
+            variant={selectedCategory === "Kỳ thi" ? "filled" : "outlined"}
             clickable
-            sx={{ borderColor: "#90CAF9", color: "#1976D2" }}
+            sx={{
+              borderColor: "#90CAF9",
+              color: selectedCategory === "Kỳ thi" ? "#fff" : undefined,
+              backgroundColor: selectedCategory === "Kỳ thi" ? "#1976D2" : undefined,
+              fontWeight: selectedCategory === "Kỳ thi" ? 600 : undefined,
+            }}
+            onClick={() => setSelectedCategory(selectedCategory === "Kỳ thi" ? null : "Kỳ thi")}
           />
           <Chip
             label="Sự kiện"
             size="small"
-            variant="outlined"
+            variant={selectedCategory === "Sự kiện" ? "filled" : "outlined"}
             clickable
-            sx={{ borderColor: "#FFCC80", color: "#EF6C00" }}
+            sx={{
+              borderColor: "#FFCC80",
+              color: selectedCategory === "Sự kiện" ? "#fff" : undefined,
+              backgroundColor: selectedCategory === "Sự kiện" ? "#EF6C00" : undefined,
+              fontWeight: selectedCategory === "Sự kiện" ? 600 : undefined,
+            }}
+            onClick={() => setSelectedCategory(selectedCategory === "Sự kiện" ? null : "Sự kiện")}
           />
           <IconButton
             size="small"
