@@ -7,7 +7,6 @@ import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import StarIcon from "@mui/icons-material/Star";
 import SchoolIcon from "@mui/icons-material/School";
 import AssessmentIcon from "@mui/icons-material/Assessment";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useNavigate } from "react-router-dom";
 import { Box, IconButton, useTheme } from "@mui/material"; // Import IconButton, Typography, useTheme
@@ -28,8 +27,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       "Hỏi đáp",
       "Mục tiêu",
       "Pomodoro",
-      "Hiệu suất học tập",
-      "Thông báo",
       "Cài đặt"
     ];
     if (stored && validTabs.includes(stored)) {
@@ -105,7 +102,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               minHeight: "64px", // Match typical header height
             }}
           >
-            {/* --- Conditionally render logo/title --- */}
             {!isCollapsed && (
               <Box
                 sx={{
@@ -135,13 +131,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           <Menu
             menuItemStyles={{
               button: ({ active }) => {
-                // Apply styles directly here using sx prop logic is often cleaner
                 return getMenuItemStyle(active);
               },
-              // You can customize other parts like icons etc.
-              // icon: ({ level, active, disabled }) => {
-              //    return { color: active ? 'white' : 'black' };
-              // },
             }}
           >
             <MenuItem
@@ -190,27 +181,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             >
               Pomodoro
             </MenuItem>
-            <MenuItem
-              disabled={true}
-              icon={<AssessmentIcon />}
-              active={activeTab === "Hiệu suất học tập"}
-              onClick={() =>
-                handleTabChange("Hiệu suất học tập", "/performance")
-              }
-            >
-              Hiệu suất học tập
-            </MenuItem>
-            <MenuItem
-              disabled={true}
-              icon={<NotificationsIcon />}
-              active={activeTab === "Thông báo"}
-              onClick={() => handleTabChange("Thông báo", "/notifications")}
-            >
-              Thông báo
-            </MenuItem>
-            {/* Spacer Item - push settings to bottom */}
-            {/* <Box sx={{ flexGrow: 1 }} />  */}
-            {/* This spacer might need to be placed differently depending on layout */}
             <MenuItem
               disabled={true}
               icon={<SettingsIcon />}
