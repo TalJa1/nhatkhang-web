@@ -9,6 +9,12 @@ import {
   Paper, // Use Paper for subtle elevation/background
   alpha, // Utility for color transparency
   useTheme,
+  Popover,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -39,6 +45,55 @@ const HeaderSearchBar: React.FC<HeaderBarProps> = ({
 }) => {
   const theme = useTheme(); // Access theme for consistent styling
   const [displayAvatarSrc, setDisplayAvatarSrc] = useState(avatarSrc);
+
+  // Notification popover state
+  const [notiAnchorEl, setNotiAnchorEl] = useState<null | HTMLElement>(null);
+  const handleNotiClick = (event: React.MouseEvent<HTMLElement>) => {
+    setNotiAnchorEl(event.currentTarget);
+  };
+  const handleNotiClose = () => {
+    setNotiAnchorEl(null);
+  };
+  const notiOpen = Boolean(notiAnchorEl);
+
+  // Get Google login avatar from localStorage (if available)
+  let googleAvatar = userAvatarPlaceholder;
+  const storedUserData = localStorage.getItem("userData");
+  if (storedUserData) {
+    try {
+      const userData: UserData = JSON.parse(storedUserData);
+      if (userData && userData.photoURL) {
+        googleAvatar = userData.photoURL;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Fake notification data
+  const notifications = [
+    {
+      id: 1,
+      title: "Bạn có bài tập mới",
+      description: "Toán: Nộp bài tập về nhà trước 20:00 hôm nay.",
+      avatar: googleAvatar,
+      time: "5 phút trước",
+    },
+    {
+      id: 2,
+      title: "Lịch học thay đổi",
+      description: "Lịch học Lý chuyển sang thứ 5 tuần này.",
+      avatar: googleAvatar,
+      time: "1 giờ trước",
+    },
+    {
+      id: 3,
+      title: "Tin nhắn mới từ giáo viên",
+      description: "Cô Lan: Đọc kỹ tài liệu trước khi đến lớp.",
+      avatar: googleAvatar,
+      time: "2 giờ trước",
+    },
+  ];
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
@@ -129,27 +184,77 @@ const HeaderSearchBar: React.FC<HeaderBarProps> = ({
         </Box>
 
         {/* Notification Bell Section */}
-        <IconButton
-          size="medium"
-          aria-label="show new notifications"
-          color="inherit"
-          sx={{
-            border: `1px solid ${theme.palette.divider}`, // Border around icon button
-            borderRadius: "10px", // Rounded square shape
-            padding: theme.spacing(0.75), // Adjust padding for size
-            color: theme.palette.text.secondary, // Icon color
-          }}
-        >
-          <Badge
-            badgeContent={notificationCount}
-            color="error" // Red dot color
-            variant="dot" // Use a dot instead of a number count
-            overlap="circular" // Position dot correctly
-            invisible={!notificationCount || notificationCount === 0} // Hide dot if count is 0
+        <>
+          <IconButton
+            size="medium"
+            aria-label="show new notifications"
+            color="inherit"
+            sx={{
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: "10px",
+              padding: theme.spacing(0.75),
+              color: theme.palette.text.secondary,
+            }}
+            onClick={handleNotiClick}
           >
-            <NotificationsNoneOutlinedIcon fontSize="small" />
-          </Badge>
-        </IconButton>
+            <Badge
+              badgeContent={notificationCount}
+              color="error"
+              variant="dot"
+              overlap="circular"
+              invisible={!notificationCount || notificationCount === 0}
+            >
+              <NotificationsNoneOutlinedIcon fontSize="small" />
+            </Badge>
+          </IconButton>
+          <Popover
+            open={notiOpen}
+            anchorEl={notiAnchorEl}
+            onClose={handleNotiClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            PaperProps={{
+              sx: {
+                minWidth: 320,
+                maxWidth: 360,
+                p: 0,
+                borderRadius: 2,
+                boxShadow: 4,
+              },
+            }}
+          >
+            <List sx={{ p: 0 }}>
+              {notifications.slice(0, 3).map((noti, idx) => (
+                <React.Fragment key={noti.id}>
+                  <ListItem alignItems="flex-start" sx={{ py: 1.5, px: 2 }}>
+                    <ListItemAvatar>
+                      <Avatar src={noti.avatar} alt="noti" sx={{ width: 36, height: 36 }} />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={<Typography sx={{ fontWeight: 600, fontSize: 15 }}>{noti.title}</Typography>}
+                      secondary={
+                        <>
+                          <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+                            {noti.description}
+                          </Typography>
+                          <Typography sx={{ fontSize: 12, color: theme.palette.text.disabled, mt: 0.5 }}>
+                            {noti.time}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                  {idx < notifications.slice(0, 3).length - 1 && <Divider component="li" />}
+                </React.Fragment>
+              ))}
+              {notifications.length === 0 && (
+                <ListItem sx={{ py: 2, justifyContent: "center" }}>
+                  <Typography color="text.secondary" fontSize={14}>Không có thông báo mới</Typography>
+                </ListItem>
+              )}
+            </List>
+          </Popover>
+        </>
       </Box>
     </Paper>
   );
