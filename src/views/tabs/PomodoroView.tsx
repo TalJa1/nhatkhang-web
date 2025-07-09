@@ -18,6 +18,11 @@ const POMODORO_TIME = 20 * 60; // 20 minutes in seconds
 const REST_TIME = 5 * 60; // 5 minutes in seconds
 const LONG_REST_TIME = 15 * 60; // 15 minutes in seconds
 
+interface Task {
+  text: string;
+  done: boolean;
+}
+
 const PromodoroMain = () => {
   const [tab, setTab] = useState(0);
   const [timeLeft, setTimeLeft] = useState(POMODORO_TIME);
@@ -25,7 +30,7 @@ const PromodoroMain = () => {
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [restCount, setRestCount] = useState(0);
   const [longRestCount, setLongRestCount] = useState(0);
-  const [tasks, setTasks] = useState([{ text: "haha", done: false }]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -85,7 +90,7 @@ const PromodoroMain = () => {
         pt={6}
       >
         <Typography variant="h6" fontWeight={700} mb={2} textAlign="center">
-          Tại sao bạn không thử thách bản thân?{' '}
+          Tại sao bạn không thử thách bản thân?{" "}
           <span role="img" aria-label="smile">
             🥱
           </span>
@@ -94,7 +99,7 @@ const PromodoroMain = () => {
           <Tab
             label={
               <Box display="flex" alignItems="center">
-                Pomodoro{' '}
+                Pomodoro{" "}
                 <Typography ml={0.5} color="#256A6A" fontWeight={700}>
                   {" "}
                   {pomodoroCount}{" "}
@@ -105,7 +110,7 @@ const PromodoroMain = () => {
           <Tab
             label={
               <Box display="flex" alignItems="center">
-                Nghỉ ngắn{' '}
+                Nghỉ ngắn{" "}
                 <Typography ml={0.5} color="#256A6A" fontWeight={700}>
                   {" "}
                   {restCount}{" "}
@@ -116,7 +121,7 @@ const PromodoroMain = () => {
           <Tab
             label={
               <Box display="flex" alignItems="center">
-                Nghỉ dài{' '}
+                Nghỉ dài{" "}
                 <Typography ml={0.5} color="#256A6A" fontWeight={700}>
                   {" "}
                   {longRestCount}{" "}
@@ -208,13 +213,30 @@ const PromodoroMain = () => {
                 onChange={() => handleTaskToggle(idx)}
               />
               <Typography
-                sx={{ textDecoration: task.done ? "line-through" : "none", flex: 1 }}
+                sx={{
+                  textDecoration: task.done ? "line-through" : "none",
+                  flex: 1,
+                }}
               >
                 {task.text}
               </Typography>
-              <IconButton onClick={() => setTasks(tasks.filter((_, i) => i !== idx))} size="small">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 6L14 14M6 14L14 6" stroke="#256A6A" strokeWidth="2" strokeLinecap="round"/>
+              <IconButton
+                onClick={() => setTasks(tasks.filter((_, i) => i !== idx))}
+                size="small"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 6L14 14M6 14L14 6"
+                    stroke="#256A6A"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </IconButton>
             </Paper>
