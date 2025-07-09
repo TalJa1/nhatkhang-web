@@ -224,7 +224,7 @@ const HomeView = () => {
               >
                 {name}
               </Box>
-              <Box>Học sinh lớp 11A1</Box>
+              <br />
               <Box
                 sx={{
                   display: "flex",
