@@ -16,6 +16,7 @@ interface SidebarProps {
   children: React.ReactNode;
 }
 
+
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const theme = useTheme(); // Access MUI theme for styling if needed
   const [activeTab, setActiveTab] = useState(() => {
@@ -40,7 +41,15 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => window.innerWidth <= 1100);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsCollapsed(window.innerWidth <= 1100);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleTabChange = (tabName: string, route: string) => {
     setActiveTab(tabName);
