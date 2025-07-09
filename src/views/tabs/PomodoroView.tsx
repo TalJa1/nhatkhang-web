@@ -79,8 +79,7 @@ const PromodoroMain = () => {
   };
 
   return (
-    <Box display="flex" height="100vh" bgcolor="#fff">
-      {/* Main Pomodoro Section */}
+    <Box display="flex" bgcolor="#fff" overflow="hidden">
       <Box
         flex={1}
         display="flex"
@@ -101,7 +100,6 @@ const PromodoroMain = () => {
               <Box display="flex" alignItems="center">
                 Pomodoro{" "}
                 <Typography ml={0.5} color="#256A6A" fontWeight={700}>
-                  {" "}
                   {pomodoroCount}{" "}
                 </Typography>
               </Box>
@@ -112,7 +110,6 @@ const PromodoroMain = () => {
               <Box display="flex" alignItems="center">
                 Nghỉ ngắn{" "}
                 <Typography ml={0.5} color="#256A6A" fontWeight={700}>
-                  {" "}
                   {restCount}{" "}
                 </Typography>
               </Box>
@@ -123,7 +120,6 @@ const PromodoroMain = () => {
               <Box display="flex" alignItems="center">
                 Nghỉ dài{" "}
                 <Typography ml={0.5} color="#256A6A" fontWeight={700}>
-                  {" "}
                   {longRestCount}{" "}
                 </Typography>
               </Box>
@@ -190,12 +186,14 @@ const PromodoroMain = () => {
         py={2}
         display="flex"
         flexDirection="column"
-        height="100vh"
+        position="relative"
+        height="100%"
+        overflow="hidden"
       >
         <Typography variant="h5" fontWeight={700} mb={1}>
           Công việc <span style={{ fontWeight: 400 }}>{tasks.length}</span>
         </Typography>
-        <Box flex={1} overflow="auto">
+        <Box flex={1} minHeight={0} overflow="auto">
           {tasks.map((task, idx) => (
             <Paper
               key={idx}
