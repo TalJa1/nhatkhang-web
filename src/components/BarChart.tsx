@@ -18,9 +18,19 @@ ChartJS.register(
   Legend
 );
 
+
+import { format, subMonths } from "date-fns";
+import { vi } from "date-fns/locale";
+
 const BarChart = () => {
+  const now = new Date();
+  const months = Array.from({ length: 5 }, (_, i) => {
+    const d = subMonths(now, 4 - i);
+    return format(d, "MMM", { locale: vi });
+  });
+
   const data = {
-    labels: ["th1", "th2", "th3", "th4", "th5"],
+    labels: months,
     datasets: [
       {
         label: "",
