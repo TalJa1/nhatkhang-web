@@ -6,7 +6,7 @@ const AnimatedCircleProgress = ({ milestone, total }: { milestone: number; total
   const targetOffset = arcLength - percent * arcLength;
   const minAngle = 135;
   const maxAngle = 45;
-  const targetAngle = minAngle + (maxAngle - minAngle) * percent;
+  const targetAngle = minAngle - (minAngle - maxAngle) * percent;
   const [offset, setOffset] = React.useState(arcLength);
   const [angle, setAngle] = React.useState(minAngle);
   React.useEffect(() => {
@@ -30,8 +30,7 @@ const AnimatedCircleProgress = ({ milestone, total }: { milestone: number; total
   }, [milestone, total, targetAngle, targetOffset]);
   const r = 50;
   const cx = 70, cy = 70;
-  const angleSVG = angle;
-  const rad = (angleSVG * Math.PI) / 180;
+  const rad = (angle * Math.PI) / 180;
   const x2 = cx + r * Math.cos(rad);
   const y2 = cy + r * Math.sin(rad);
   return (
