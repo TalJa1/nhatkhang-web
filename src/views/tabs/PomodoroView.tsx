@@ -1,4 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
+import relaxingPiano from "../../assets/sound/relaxing_piano.mp3";
+import rainSound from "../../assets/sound/rain_sound.mp3"
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import {
   Box,
   Typography,
@@ -24,6 +31,83 @@ interface Task {
 }
 
 const PromodoroMain = () => {
+  // Audio Player State
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [audioVolume, setAudioVolume] = useState(() => {
+    const stored = localStorage.getItem('pomodoro_audio_volume');
+    return stored ? Number(stored) : 1;
+  });
+  const [audioSrc, setAudioSrc] = useState(relaxingPiano);
+  // Menu state
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+
+  // Audio Player Handlers
+  const handleAudioPlayPause = () => {
+    if (!audioRef.current) return;
+    if (isAudioPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+  };
+
+  const handleAudioVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    setAudioVolume(value);
+    localStorage.setItem('pomodoro_audio_volume', value.toString());
+    if (audioRef.current) {
+      audioRef.current.volume = value;
+    }
+  };
+
+  // Menu handlers
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const handleSoundSelect = (src: string) => {
+    setAudioSrc(src);
+    setIsAudioPlaying(false);
+    handleMenuClose();
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    // Remove unused progress and duration listeners
+    audio.addEventListener("ended", () => setIsAudioPlaying(false));
+    audio.volume = audioVolume;
+    return () => {
+      audio.removeEventListener("ended", () => setIsAudioPlaying(false));
+    };
+    // eslint-disable-next-line
+  }, []);
+
+  // Keep volume in sync if changed
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = audioVolume;
+    }
+  }, [audioVolume]);
+
+  // Sync play/pause state
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isAudioPlaying) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  }, [isAudioPlaying]);
+
+  // Removed unused handleAudioChange
+
+  // Removed unused formatAudioTime
   const [tab, setTab] = useState(0);
   const [timeLeft, setTimeLeft] = useState(POMODORO_TIME);
   const [isRunning, setIsRunning] = useState(false);
@@ -152,6 +236,78 @@ const PromodoroMain = () => {
               strokeLinecap: "round",
             })}
           />
+        </Box>
+
+        {/* Audio Player */}
+        <Box
+          width={340}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          mb={3}
+          bgcolor="#f8fafc"
+          borderRadius={3}
+          boxShadow="0 2px 8px #e0e7ef"
+          py={2}
+        >
+          <audio
+            ref={audioRef}
+            src={audioSrc}
+            preload="auto"
+            loop
+            onPlay={() => setIsAudioPlaying(true)}
+            onPause={() => setIsAudioPlaying(false)}
+            style={{ display: "none" }}
+          />
+          <Box display="flex" alignItems="center" width="100%" justifyContent="center">
+            <IconButton
+              onClick={handleAudioPlayPause}
+              sx={{
+                width: 60,
+                height: 60,
+                mb: 1,
+                bgcolor: "#fff",
+                boxShadow: "0 2px 8px #e0e7ef",
+              }}
+            >
+              {isAudioPlaying ? (
+                <PauseCircleIcon sx={{ fontSize: 36 }} />
+              ) : (
+                <PlayArrowIcon sx={{ fontSize: 36 }} />
+              )}
+            </IconButton>
+            <IconButton
+              onClick={handleMenuOpen}
+              sx={{ ml: 1, mb: 1 }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => handleSoundSelect(relaxingPiano)} selected={audioSrc === relaxingPiano}>
+                Nhạc Piano
+              </MenuItem>
+              <MenuItem onClick={() => handleSoundSelect(rainSound)} selected={audioSrc === rainSound}>
+                Tiếng mưa
+              </MenuItem>
+            </Menu>
+          </Box>
+          <Box display="flex" alignItems="center" width="90%" mt={1}>
+            <span style={{ fontSize: 14, minWidth: 40 }}>Âm lượng</span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={audioVolume}
+              onChange={handleAudioVolumeChange}
+              style={{ flex: 1, margin: "0 8px" }}
+            />
+            <span style={{ fontSize: 14, minWidth: 32 }}>{Math.round(audioVolume * 100)}</span>
+          </Box>
         </Box>
         <Typography variant="subtitle2" color="#256A6A" fontWeight={700} mb={1}>
           Cấp độ
