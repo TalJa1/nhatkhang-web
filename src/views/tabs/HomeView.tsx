@@ -29,9 +29,15 @@ const AnimatedCircleProgress = ({ milestone, total }: { milestone: number; total
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
   }, [milestone, total, targetAngle, targetOffset]);
-  const r = 45;
+  // The arc is from 135deg (left) to 45deg (right), but SVG 0deg is at 3 o'clock and increases clockwise.
+  // To match the arc, we need to convert angle to SVG coordinates:
+  // 0deg (SVG) is at (cx+r, cy), 90deg is (cx, cy+r), 180deg is (cx-r, cy), 270deg is (cx, cy-r)
+  // Our arc starts at 135deg (SVG), ends at 45deg (SVG)
+  // So, angleSVG = angle (no flip needed, since 135deg is left, 45deg is right)
+  const r = 50;
   const cx = 70, cy = 70;
-  const rad = (angle * Math.PI) / 180;
+  const angleSVG = angle;
+  const rad = (angleSVG * Math.PI) / 180;
   const x2 = cx + r * Math.cos(rad);
   const y2 = cy + r * Math.sin(rad);
   return (
