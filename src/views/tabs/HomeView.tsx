@@ -1,9 +1,80 @@
+// Animated progress circle component
+import React from "react";
+
+const AnimatedCircleProgress = ({ milestone, total }: { milestone: number; total: number }) => {
+  const percent = milestone / total;
+  const arcLength = 282;
+  const targetOffset = arcLength - percent * arcLength;
+  const minAngle = 135;
+  const maxAngle = 45;
+  const targetAngle = minAngle + (maxAngle - minAngle) * percent;
+  const [offset, setOffset] = React.useState(arcLength);
+  const [angle, setAngle] = React.useState(minAngle);
+  React.useEffect(() => {
+    let frame: number;
+    const duration = 1200;
+    const start = performance.now();
+    function animate(now: number) {
+      const elapsed = Math.min(now - start, duration);
+      const progress = elapsed / duration;
+      setOffset(arcLength - (arcLength - targetOffset) * progress);
+      setAngle(minAngle + (targetAngle - minAngle) * progress);
+      if (elapsed < duration) {
+        frame = requestAnimationFrame(animate);
+      } else {
+        setOffset(targetOffset);
+        setAngle(targetAngle);
+      }
+    }
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [milestone, total, targetAngle, targetOffset]);
+  const r = 45;
+  const cx = 70, cy = 70;
+  const rad = (angle * Math.PI) / 180;
+  const x2 = cx + r * Math.cos(rad);
+  const y2 = cy + r * Math.sin(rad);
+  return (
+    <Box sx={{ position: "relative", width: 140, height: 140, mb: 1 }}>
+      <svg width={140} height={140} viewBox="0 0 140 140">
+        <path
+          d="M 30 120 A 60 60 0 1 1 110 120"
+          fill="none"
+          stroke="#F8E7D9"
+          strokeWidth="12"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 30 120 A 60 60 0 1 1 110 120"
+          fill="none"
+          stroke="#F18C3B"
+          strokeWidth="12"
+          strokeLinecap="round"
+          strokeDasharray={arcLength}
+          strokeDashoffset={offset}
+          style={{ filter: "drop-shadow(0 2px 8px #F18C3B33)", transition: "stroke-dashoffset 0.2s" }}
+        />
+        <line
+          x1={cx}
+          y1={cy}
+          x2={x2}
+          y2={y2}
+          stroke="#F18C3B"
+          strokeWidth="5"
+          strokeLinecap="round"
+          style={{ filter: "drop-shadow(0 2px 8px #F18C3B33)" }}
+        />
+        <circle cx={cx} cy={cy} r="10" fill="#fff" stroke="#F18C3B" strokeWidth="4" />
+      </svg>
+    </Box>
+  );
+};
 import { Box, Grid } from "@mui/material";
 import Sidebar from "../../components/Sidebar";
 import wavinghand from "../../assets/home/wavinghand.png";
 import { useEffect, useState } from "react";
 import BarChart from "../../components/BarChart";
-import progress from "../../assets/home/progress.png";
+// import progress from "../../assets/home/progress.png";
 import { getLearningData } from "../../services/home/learningService";
 import PercentProgress from "../../components/home/PercentProgress";
 import EditSquareIcon from "@mui/icons-material/EditSquare";
@@ -78,7 +149,7 @@ const HomeView = () => {
                     height: "100%",
                   }}
                 >
-                  <img src={progress} width={140} />
+                  <AnimatedCircleProgress milestone={8} total={10} />
                   <Box display={"flex"} flexDirection={"row"} gap={1}>
                     <Box sx={{ fontSize: "14px", color: "#4F4F4F" }}>
                       Bài tập hoàn thành:
