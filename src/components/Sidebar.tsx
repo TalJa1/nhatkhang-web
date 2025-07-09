@@ -27,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       "Hỏi đáp",
       "Mục tiêu",
       "Pomodoro",
-      "Cài đặt"
+      "Cài đặt",
     ];
     if (stored && validTabs.includes(stored)) {
       return stored;
@@ -164,6 +164,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             >
               Hỏi đáp
             </MenuItem>
+            <MenuItem
+              disabled={false}
+              icon={<SchoolIcon />}
+              active={activeTab === "Pomodoro"}
+              onClick={() => handleTabChange("Pomodoro", "/pomodoro")}
+            >
+              Pomodoro
+            </MenuItem>
             {/* Add other MenuItems similarly */}
             <MenuItem
               disabled={true}
@@ -172,14 +180,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               onClick={() => handleTabChange("Mục tiêu", "/goals")}
             >
               Mục tiêu
-            </MenuItem>
-            <MenuItem
-              disabled={true}
-              icon={<SchoolIcon />}
-              active={activeTab === "Pomodoro"}
-              onClick={() => handleTabChange("Pomodoro", "/pomodoro")}
-            >
-              Pomodoro
             </MenuItem>
             <MenuItem
               disabled={true}
