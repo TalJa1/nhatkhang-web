@@ -2,6 +2,10 @@ import React from "react";
 import Sidebar from "../../components/Sidebar";
 import { Box, Paper, InputBase, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github.css';
 
 const QAView = () => {
   // Get user name from localStorage
@@ -123,7 +127,101 @@ const QAView = () => {
                   boxShadow: msg.sender === "user" ? "0 2px 8px #4F8CFF33" : msg.sender === "ai" ? "0 2px 8px #256A6A55" : "0 2px 8px #256A6A22",
                 }}
               >
-                {msg.text}
+                {msg.sender === "ai" ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={{
+                      // Custom styling for markdown elements
+                      p: ({ children }) => <div style={{ margin: '0.5em 0', lineHeight: 1.6 }}>{children}</div>,
+                      ul: ({ children }) => <ul style={{ margin: '0.5em 0', paddingLeft: '1.5em' }}>{children}</ul>,
+                      ol: ({ children }) => <ol style={{ margin: '0.5em 0', paddingLeft: '1.5em' }}>{children}</ol>,
+                      li: ({ children }) => <li style={{ margin: '0.2em 0' }}>{children}</li>,
+                      code: ({ children }) => (
+                        <code style={{ 
+                          background: 'rgba(255,255,255,0.2)', 
+                          padding: '2px 4px', 
+                          borderRadius: '3px',
+                          fontSize: '0.9em'
+                        }}>
+                          {children}
+                        </code>
+                      ),
+                      pre: ({ children }) => (
+                        <pre style={{ 
+                          background: 'rgba(255,255,255,0.1)', 
+                          padding: '8px', 
+                          borderRadius: '4px',
+                          overflowX: 'auto',
+                          margin: '0.5em 0'
+                        }}>
+                          {children}
+                        </pre>
+                      ),
+                      blockquote: ({ children }) => (
+                        <blockquote style={{ 
+                          borderLeft: '3px solid rgba(255,255,255,0.3)',
+                          paddingLeft: '1em',
+                          margin: '0.5em 0',
+                          fontStyle: 'italic'
+                        }}>
+                          {children}
+                        </blockquote>
+                      ),
+                      h1: ({ children }) => <h1 style={{ margin: '0.5em 0', fontSize: '1.5em' }}>{children}</h1>,
+                      h2: ({ children }) => <h2 style={{ margin: '0.5em 0', fontSize: '1.3em' }}>{children}</h2>,
+                      h3: ({ children }) => <h3 style={{ margin: '0.5em 0', fontSize: '1.1em' }}>{children}</h3>,
+                      strong: ({ children }) => <strong style={{ fontWeight: 'bold' }}>{children}</strong>,
+                      em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
+                      a: ({ href, children }) => (
+                        <a href={href} style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">
+                          {children}
+                        </a>
+                      ),
+                      table: ({ children }) => (
+                        <table style={{ 
+                          borderCollapse: 'collapse', 
+                          width: '100%', 
+                          margin: '0.5em 0' 
+                        }}>
+                          {children}
+                        </table>
+                      ),
+                      th: ({ children }) => (
+                        <th style={{ 
+                          border: '1px solid rgba(255,255,255,0.2)', 
+                          padding: '8px', 
+                          textAlign: 'left',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          fontWeight: 'bold'
+                        }}>
+                          {children}
+                        </th>
+                      ),
+                      td: ({ children }) => (
+                        <td style={{ 
+                          border: '1px solid rgba(255,255,255,0.2)', 
+                          padding: '8px', 
+                          textAlign: 'left'
+                        }}>
+                          {children}
+                        </td>
+                      ),
+                      hr: () => (
+                        <hr style={{ 
+                          border: 'none', 
+                          height: '1px', 
+                          backgroundColor: 'rgba(255,255,255,0.3)', 
+                          margin: '1em 0' 
+                        }} />
+                      ),
+                    }}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                ) : (
+                  msg.text
+                )}
               </Paper>
             </Box>
           ))}
@@ -175,7 +273,7 @@ const QAView = () => {
             </IconButton>
           </Paper>
         </Box>
-        {/* Loading animation style */}
+        {/* Loading animation and markdown styles */}
         <style>{`
           .dot-flashing {
             position: relative;
@@ -208,6 +306,31 @@ const QAView = () => {
           @keyframes dotFlashing {
             0% { opacity: 0.2; }
             50%, 100% { opacity: 1; }
+          }
+          
+          /* Markdown styles for better text rendering */
+          .markdown-content {
+            line-height: 1.6;
+          }
+          .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0.5em 0;
+          }
+          .markdown-content th, .markdown-content td {
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px;
+            text-align: left;
+          }
+          .markdown-content th {
+            background-color: rgba(255,255,255,0.1);
+            font-weight: bold;
+          }
+          .markdown-content hr {
+            border: none;
+            height: 1px;
+            background-color: rgba(255,255,255,0.3);
+            margin: 1em 0;
           }
         `}</style>
       </Box>
