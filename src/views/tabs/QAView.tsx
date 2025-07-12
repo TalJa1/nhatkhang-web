@@ -26,23 +26,69 @@ const QAView = () => {
     ]);
     const [loading, setLoading] = React.useState(false);
 
-    // Handler for sending message
-    const handleSend = () => {
+    // Handler for sending message using AI API
+    const API_URL = "https://api.lenguyenbaolong.art/api/v1/chats_openai/07e10f265e6411f0ae912ec3e04057e5/chat/completions";
+    const API_KEY = "ragflow-Y3YzI5M2Q0MjdlZjExZjBiMDBkNzZlNT";
+    const MODEL = "deepseek-chat@DeepSeek";
+
+    const handleSend = async () => {
       if (!input.trim()) return;
+      const userMessage = input;
       setMessages((msgs) => [
         ...msgs,
-        { sender: "user", text: input },
+        { sender: "user", text: userMessage },
       ]);
       setInput("");
       setLoading(true);
-      // Simulate AI response loading
-      setTimeout(() => {
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [
+              { role: "user", content: userMessage }
+            ],
+            max_tokens: 2048,
+            stream: false
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("AI API response:", data);
+        
+        let aiText = "(Không nhận được phản hồi từ AI)";
+        
+        // Check for the AI response in the expected format
+        if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+          aiText = data.choices[0].message.content.trim();
+        } else if (data.error) {
+          aiText = `Lỗi API: ${data.error}`;
+        } else if (data.message) {
+          aiText = `Lỗi: ${data.message}`;
+        }
+
         setMessages((msgs) => [
           ...msgs,
-          { sender: "ai", text: "(Đang phát triển: SSP AI sẽ trả lời tại đây...)" },
+          { sender: "ai", text: aiText },
         ]);
+      } catch (error) {
+        console.error("Error calling AI API:", error);
+        setMessages((msgs) => [
+          ...msgs,
+          { sender: "ai", text: "(Lỗi khi kết nối tới AI. Vui lòng thử lại.)" },
+        ]);
+      } finally {
         setLoading(false);
-      }, 1800);
+      }
     };
 
     // Enter key to send
